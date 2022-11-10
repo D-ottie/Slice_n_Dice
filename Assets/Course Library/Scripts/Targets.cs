@@ -89,7 +89,7 @@ public class Targets : MonoBehaviour
         if(!FindObjectOfType<GameManager>().gameOver)
         {
             //FindObjectOfType<GameManager>().DisplayScore(); Nk
-            FindObjectOfType<GameManager>().UpdateScore(pointValue, FindObjectOfType<GameManager>().level);
+            FindObjectOfType<GameManager>().UpdateScore(pointValue);
             Instantiate(explsosionParticle, transform.position, explsosionParticle.transform.rotation);
 
             if (gameObject.CompareTag("Bad"))
@@ -97,27 +97,10 @@ public class Targets : MonoBehaviour
                 Destroy(gameObject);
                 FindObjectOfType<GameManager>().GameOver();
             }
-            if (!gameObject.CompareTag("Bad"))
+            else
             {
-                if (gameObject.CompareTag("Clock"))
-                {
-                    FindObjectOfType<GameManager>().isClockInstantiated = true;
-                    Instantiate(FindObjectOfType<GameManager>().smallClocks, transform.position, transform.rotation);
-                }
                 Destroy(gameObject);
             }
-            
-            /*            else if (gameObject.CompareTag("Bad"))
-                        {
-                            //gameObject.transform.localScale += new Vector3(20, 20, 20);
-                            //gameObject.transform.DOShakeScale(1f, new Vector3(20, 20, 20), 50, 10, true);
-                            Debug.Log("B-a-a-a-a-d");
-                            //gameObject.GetComponent<Animator>().enabled = true;
-                            //light.enabled = true;
-
-                            // StartCoroutine(Delay());
-                        }*/
-
         }
     }
 }

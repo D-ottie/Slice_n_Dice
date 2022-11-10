@@ -71,16 +71,7 @@ public class ClickAndSwipe : MonoBehaviour
 
         if (collision.gameObject.GetComponent<Targets>())
         {
-            if (collision.gameObject.CompareTag("Clock"))
-            {
-                //Destroy(collision.gameObject);
-                playerAudio.PlayOneShot(clockSound, 1.0f);
-                FindObjectOfType<GameManager>().countdown += 10;
-            }
-            else
-            {
-                playerAudio.PlayOneShot(crashMonsterSound, 1.0f);
-            }
+            playerAudio.PlayOneShot(crashMonsterSound, 1.0f);
             collision.gameObject.GetComponent<Targets>().DestroyTarget();
         }
 

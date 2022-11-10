@@ -9,31 +9,32 @@ using DG.Tweening;
 public class GameManager : MonoBehaviour
 {
     public List<GameObject> targets;
-    public List<GameObject> clockPrefab;
+    // public List<GameObject> clockPrefab;
 
-    private float spawnRate = 1.0f;
-    public int countdown = 60;
+    private float spawnRate = 0.5f;
+    // public int countdown = 60;
     public int lives;
 
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
     //public TextMeshProUGUI gameOverText;
-    public TextMeshProUGUI counterText;
-    //public TextMeshProUGUI livesText;
+    public TextMeshProUGUI scoreTextOnGameOver;
+    public TextMeshProUGUI bestScoreOnGameOver;
     public TextMeshProUGUI pointsText;
 
     public bool gameOver;
    // public bool displayed;
     public int score;
     public int highScore;
-    private int highScoreMedium, highScoreHard;
-    //public Button restartButton;
 
-    public GameObject titleScreen;
-    public GameObject titleText;
-    public GameObject easyButton;
-    public GameObject mediumButton;
-    public GameObject hardButton;
+    // private int highScoreMedium, highScoreHard;
+    // //public Button restartButton;
+
+    // public GameObject titleScreen;
+    // public GameObject titleText;
+    // public GameObject easyButton;
+    // public GameObject mediumButton;
+    // public GameObject hardButton;
 
 
     public GameObject pauseScreen;
@@ -45,16 +46,16 @@ public class GameManager : MonoBehaviour
     public GameObject lives1;
     public GameObject lives0;
 
-    public GameObject runTimeUI;
+    // public GameObject runTimeUI;
 
-    private Rigidbody smallClocksRb;
-    public GameObject smallClocks;
-    public GameObject smallClocksDestination;
-    public bool isClockInstantiated;
+    // private Rigidbody smallClocksRb;
+    // public GameObject smallClocks;
+    //public GameObject smallClocksDestination;
+    //public bool isClockInstantiated;
 
     public bool gameHasStarted = false;
-    public enum LEVEL { EASY, MEDIUM, HARD }
-    public LEVEL level;
+    //public enum LEVEL { EASY, MEDIUM, HARD }
+    //public LEVEL level;
 
     // private DOTweenAnimation pointValueanimation;
 
@@ -62,14 +63,20 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //pointValueanimation = pointsText.GetComponent<DOTweenAnimation>();
-        runTimeUI.SetActive(false);
-        smallClocksRb = smallClocks.GetComponent<Rigidbody>();
+        //runTimeUI.SetActive(false);
+
+        UpdateLives(3);
+        UpdateScore(0);
+        StartCoroutine(SpawnMonsters());
+        gameOver = false;
+        gameHasStarted = true;
+        Time.timeScale = 1f;
 
         highScore = PlayerPrefs.GetInt("HighScore");
-        highScoreMedium = PlayerPrefs.GetInt("HighScoreMedium");
-        highScoreHard = PlayerPrefs.GetInt("HighScoreHard");
+        // highScoreMedium = PlayerPrefs.GetInt("HighScoreMedium");
+        // highScoreHard = PlayerPrefs.GetInt("HighScoreHard");
 
-        titleText.transform.DOShakeScale(5f, new Vector3(1, 1, 1), 10, 90);
+        //titleText.transform.DOShakeScale(5f, new Vector3(1, 1, 1), 10, 90);
     }
 
 
@@ -77,45 +84,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isClockInstantiated)
-        {
-            var clocks = GameObject.FindGameObjectsWithTag("SmallClock");
-            Debug.Log("small clocks instantiated");
-            //smallClocks.transform.Translate(smallClocksDestination.transform.position  * 50);
-            clocks[0].transform.DOMove(smallClocksDestination.transform.position, 3f);
-            if(clocks[0].transform.position.x > 7.0f)
-            {
-                clocks[0].SetActive(false);
-                isClockInstantiated = false;
-            }
-            
-            
-        }
 
-          //smallClocksRb.AddForce(smallClocksDestination.transform.position * 50, ForceMode.VelocityChange);
-   
-    }
-
-    public void SetLevel(string level)
-    {
-        if (level.Equals("Easy")) this.level = LEVEL.EASY;
-        if (level.Equals("Medium")) this.level = LEVEL.MEDIUM;
-        if (level.Equals("Hard")) this.level = LEVEL.HARD;
-    }
-
-    public void StartGame(int difficulty)
-    {
-        spawnRate = spawnRate / difficulty;
-        StartCoroutine(SpawnClock());
-        StartCoroutine(SpawnMonsters());
-        StartCoroutine(CountDown());
-        UpdateLives(3);
-        UpdateScore(0, level);
-        gameOver = false;
-        titleScreen.SetActive(false);
-        gameHasStarted = true;
-        Time.timeScale = 1f;
-        runTimeUI.SetActive(true);
     }
 
     IEnumerator SpawnMonsters()
@@ -123,75 +92,88 @@ public class GameManager : MonoBehaviour
         while(!gameOver)
         {
             yield return new WaitForSeconds(spawnRate);
-            int index = Random.Range(0, targets.Count);
+            int index = Random.Range(1, targets.Count);
             Instantiate(targets[index]);
-
         }
-    }
-
-    IEnumerator SpawnClock()
-    {
-        while (!gameOver)
+        while(!gameOver)
         {
-            yield return new WaitForSeconds(15);
-            int clockIndex = Random.Range(0, clockPrefab.Count);
-            Instantiate(clockPrefab[clockIndex]);
+            yield return new WaitForSeconds(spawnRate * 5);
+            Instantiate(targets[0]);
         }
     }
 
+    // IEnumerator SpawnClock()
+    // {
+    //     while (!gameOver)
+    //     {
+    //         yield return new WaitForSeconds(15);
+    //         int clockIndex = Random.Range(0, clockPrefab.Count);
+    //         Instantiate(clockPrefab[clockIndex]);
+    //     }
+    // }
 
-    IEnumerator CountDown()
-    {
 
-        counterText.text = "" + countdown;
-        while(true)
-        {
-            yield return new WaitForSeconds(1);
-            counterText.text = "" + countdown;
-            countdown -=1;
+    // IEnumerator CountDown()
+    // {
 
-            if(countdown == 0)
-            {
-                GameOver();
-            }
-        }
-    }
+    //     counterText.text = "" + countdown;
+    //     while(true)
+    //     {
+    //         yield return new WaitForSeconds(1);
+    //         counterText.text = "" + countdown;
+    //         countdown -=1;
+
+    //         if(countdown == 0)
+    //         {
+    //             GameOver();
+    //         }
+    //     }
+    // }
 
     
-    public void UpdateScore(int scoreToAdd, LEVEL level)
+    public void UpdateScore(int scoreToAdd)
     {
         score +=scoreToAdd;
         scoreText.text = "" + score;
-        /*Debug.Log(" + " + scoreToAdd + " = " + score);*/
-        switch (level)
+        if (score > highScore)
         {
-            case LEVEL.EASY:
-                if (score > highScore)
-                {
-                    highScore = score;
-                    PlayerPrefs.SetInt("HighScore", score);
-                }
-                highScoreText.text = PlayerPrefs.GetInt("HighScore").ToString();
-                break;
-            case LEVEL.MEDIUM:
-                if (score > highScoreMedium)
-                {
-                    highScoreMedium = score;
-                    PlayerPrefs.SetInt("HighScoreMedium", highScoreMedium);
-                }
-                highScoreText.text = PlayerPrefs.GetInt("HighScoreMedium").ToString();
-                break;
-            case LEVEL.HARD:
-                if (score > highScoreHard )
-                {
-                    highScoreHard = score;
-                    PlayerPrefs.SetInt("HighScoreHard", highScoreHard);
-                }
-                highScoreText.text = PlayerPrefs.GetInt("HighScoreHard").ToString();
-                break;
+            highScore = score;
+            PlayerPrefs.SetInt("HighScore", score);
         }
+
+        highScoreText.text = "BEST : " + PlayerPrefs.GetInt("HighScore").ToString();
+        scoreTextOnGameOver.text = "SCORE : " + scoreText.text;
+        bestScoreOnGameOver.text = highScoreText.text;
         
-        
+
+
+        // switch (level)
+        // {
+        //     case LEVEL.EASY:
+        //         if (score > highScore)
+        //         {
+        //             highScore = score;
+        //             PlayerPrefs.SetInt("HighScore", score);
+        //         }
+        //         highScoreText.text = PlayerPrefs.GetInt("HighScore").ToString();
+        //         break;
+        //     case LEVEL.MEDIUM:
+        //         if (score > highScoreMedium)
+        //         {
+        //             highScoreMedium = score;
+        //             PlayerPrefs.SetInt("HighScoreMedium", highScoreMedium);
+        //         }
+        //         highScoreText.text = PlayerPrefs.GetInt("HighScoreMedium").ToString();
+        //         break;
+        //     case LEVEL.HARD:
+        //         if (score > highScoreHard )
+        //         {
+        //             highScoreHard = score;
+        //             PlayerPrefs.SetInt("HighScoreHard", highScoreHard);
+        //         }
+        //         highScoreText.text = PlayerPrefs.GetInt("HighScoreHard").ToString();
+        //         break;
+        // }   
     }
 
 /*    public void DisplayScore()
@@ -255,8 +237,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-
-
     public void CheckForPause()
     { 
         if(!gameOver)
@@ -287,6 +267,16 @@ public class GameManager : MonoBehaviour
     public void PanelDeactivate(GameObject thisGameObject)
     {
         thisGameObject.SetActive(false);
+    }
+
+    public void LoadOtherScene(int sceneNumber)
+    {
+        SceneManager.LoadScene(sceneNumber);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
 

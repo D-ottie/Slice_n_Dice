@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/X-plode.unity
+    path: Assets/Scenes/MainMenu.unity
+    guid: 0b71997d49f7d28479b274e7f3a6fcbe
+  - enabled: 1
+    path: Assets/Scenes/GameScene.unity
     guid: 3b82c69e1fb135c409c453bbda25bf78
   m_configObjects: {}
